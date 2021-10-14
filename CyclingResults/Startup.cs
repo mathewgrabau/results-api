@@ -57,8 +57,6 @@ namespace CyclingResults
 
             app.UseAuthorization();
 
-           
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

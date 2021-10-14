@@ -3,6 +3,18 @@ using System.Collections.Generic;
 
 namespace CyclingResults
 {
+
+    public class RaceStatistics
+    {
+        public int Id { get; set; }
+
+        public int RaceId { get; set; }
+
+        public long AverageTime { get; set; }
+
+        public long AverageLapTime { get; set; }
+    }
+
     public class Race
     {
         public int Id { get; set; }
@@ -20,6 +32,8 @@ namespace CyclingResults
         public string RaceType { get; set; }
 
         public string Classification { get; set; }
+
+        public int Laps { get; set; }
 
         public List<Result> Results { get; set; }
     }
@@ -61,6 +75,22 @@ namespace CyclingResults
         /// </summary>
         public bool Started { get; set; }
 
+        public int LapsCompleted { get; set; }
+
         public int? Place { get; set; }
+
+        /// <summary>
+        /// Calculates the average lap time for this racers result.
+        /// </summary>
+        /// <returns></returns>
+        public long CalculateAverageLapTime()
+        {
+            if (LapsCompleted > 0)
+            {
+                return ResultTime / LapsCompleted;
+            }
+
+            return long.MaxValue;  
+        }
     }
 }

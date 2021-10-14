@@ -16,7 +16,7 @@ namespace CyclingResults.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IEnumerable<Race> Get(int? id)
         {
             if (id == 0)
@@ -31,6 +31,13 @@ namespace CyclingResults.Controllers
         public IEnumerable<Result> GetResults(int id)
         {
             return SampleData.EventCollection.Races.Where(r => r.Id == id).FirstOrDefault()?.Results.OrderBy(result => result.Place);
+        }
+
+        // TODO need to figure out the single instance.
+        [HttpGet("{id}/stats")]
+        public IEnumerable<RaceStatistics> GetStatistics(int id)
+        {
+            return SampleData.EventCollection.RaceStatistics.Where(race => race.Id == id);
         }
     }
 }
