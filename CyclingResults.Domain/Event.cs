@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CyclingResults
+namespace CyclingResults.Domain
 {
     /// <summary>
     /// An event holder 
@@ -19,6 +19,5 @@ namespace CyclingResults
         public double? Longitude { get; set; }
 
         public List<Race> Races { get; set; }
-
     }
 }

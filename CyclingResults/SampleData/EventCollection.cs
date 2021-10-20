@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using CyclingResults.Domain;
+
 namespace CyclingResults.SampleData
 {
     public static class EventCollection
@@ -19,10 +21,16 @@ namespace CyclingResults.SampleData
 
         static int ResultIdGenerator = 0;
 
+        public static List<RaceStatistics> RaceStatistics { get; private set; }
+
+        static int RaceStatisticsIdGenerator = 0;
+
         static EventCollection()
         {
             Events = new List<Event>();
             Races = new List<Race>();
+            Results = new List<Result>();
+            RaceStatistics = new List<RaceStatistics>();
 
             CreateEventOneSample();
         
@@ -44,6 +52,11 @@ namespace CyclingResults.SampleData
             return ++ResultIdGenerator;
         }
 
+        static int GenerateStatisticsId()
+        {
+            return ++RaceStatisticsIdGenerator;
+        }
+
         static void CreateEventOneSample()
         {
             var eventInstance = new Event
@@ -59,9 +72,10 @@ namespace CyclingResults.SampleData
                 Id = GenerateRaceId(),
                 Name = "B (Men)",
                 StartTime = new DateTime(eventInstance.Date.Year, eventInstance.Date.Month, eventInstance.Date.Day, 12, 0, 0),
-                Results = new List<Result>()
+                Results = new List<Result>(),
+                Laps = 5
             };
-            
+
             var resultInstance = new Result
             {
                 Id = GenerateResultId(),
@@ -72,7 +86,8 @@ namespace CyclingResults.SampleData
                 ResultTime = (long)Math.Round(new TimeSpan(0, 46, 35).TotalMilliseconds, 0),
                 LicenseVerified = true,
                 Started = true,
-                Place = 25
+                Place = 25,
+                LapsCompleted = 5
             };
 
             raceInstance.Results.Add(resultInstance);
@@ -86,18 +101,61 @@ namespace CyclingResults.SampleData
                 ResultTime = (long)Math.Round(new TimeSpan(0, 46, 44).TotalMilliseconds, 0),
                 LicenseVerified = true,
                 Started = true,
-                Place = 26
+                Place = 26,
+                LapsCompleted = 5
             };
 
             raceInstance.Results.Add(resultInstance);
-
 
             Races.Add(raceInstance);
 
             // Link it into the instance of it.
             eventInstance.Races.Add(raceInstance);
 
+            RaceStatistics stats = CalculateRaceStatistics(raceInstance);
+
+            RaceStatistics.Add(stats);
+
+            raceInstance = new Race
+            {
+                Id = GenerateRaceId(),
+                Name = "B (Women)",
+                StartTime = new DateTime(eventInstance.Date.Year, eventInstance.Date.Month, eventInstance.Date.Day, 12, 0, 0),
+                Results = new List<Result>()
+            };
+
+            Races.Add(raceInstance);
+
+            eventInstance.Races.Add(raceInstance);
+
+            
             Events.Add(eventInstance);
+        }
+
+        static RaceStatistics CalculateRaceStatistics(Race race)
+        {
+            decimal lapAverage = 0;
+            decimal cummulativeAverage = 0;
+
+            foreach(var result in race.Results)
+            {
+                lapAverage += result.CalculateAverageLapTime();
+                cummulativeAverage += result.ResultTime;
+            }
+
+            if (race.Results.Count > 0)
+            {
+                lapAverage /= race.Results.Count;
+                cummulativeAverage /= race.Results.Count;
+            }
+
+            return new RaceStatistics
+            {
+                Id = GenerateStatisticsId(),
+                RaceId = race.Id,
+                AverageLapTime = (long)lapAverage,
+                AverageTime = (long)cummulativeAverage
+            };
         }
     }
 }
