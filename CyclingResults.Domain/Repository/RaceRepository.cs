@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace CyclingResults.Domain.Repository
 {
-    public class RaceRepository : IRepository<Race>
-    {
-    }
-
+   
 }

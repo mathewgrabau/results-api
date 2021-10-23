@@ -1,7 +1,13 @@
+using CyclingResults.Domain;
+using CyclingResults.Domain.Repository;
+using CyclingResults.Models;
+using CyclingResults.Models.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -38,10 +44,17 @@ namespace CyclingResults
 
             services.AddControllers();
             services.AddRazorPages();
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlite(Configuration["ConnectionStrings:AppDataConnection"]);
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CyclingResults", Version = "v1" });
             });
+
+            services.AddScoped<IRepository<Event>, EventRepository>();
+            services.AddScoped<IRepository<Race>, RaceRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

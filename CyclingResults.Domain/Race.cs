@@ -24,7 +24,10 @@ namespace CyclingResults.Domain
 
         public int Laps { get; set; }
 
-        public List<Result> Results { get; set; }
+        /// <summary>
+        /// The list of identifying properties for the race results
+        /// </summary>
+        public virtual List<Result> Results { get; set; }
     }
 
     /// <summary>
