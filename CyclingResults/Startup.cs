@@ -54,7 +54,9 @@ namespace CyclingResults
             });
 
             services.AddScoped<IRepository<Event>, EventRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IRepository<Race>, RaceRepository>();
+            services.AddScoped<IRepository<ResultUpload>, ResultUploadRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,15 +1,27 @@
 ﻿using CyclingResults.Domain;
 using CyclingResults.Domain.Repository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CyclingResults.Models.Repository
 {
+    public interface IEventRepository : IRepository<Event>
+    {
+        /// <summary>
+        /// Added functionality to include the associated race objects in the return results.
+        /// </summary>
+        /// <param name="includeRaces"></param>
+        /// <returns></returns>
+        IEnumerable<Event> GetAll(bool includeRaces);
+
+        Event Get(int id, bool includeRaces);
+    }
 
     // TODO I need an implementation that will actually work for me.
     // That means that it can actually store the items in here.
-    public class EventRepository : IRepository<Event>
+    public class EventRepository : IEventRepository
     {
         private ApplicationDbContext _db;
 
@@ -21,6 +33,16 @@ namespace CyclingResults.Models.Repository
         public IEnumerable<Event> GetAll()
         {
             return _db.Events;
+        }
+
+        public IEnumerable<Event> GetAll(bool includeRaces)
+        {
+            if (includeRaces)
+            {
+                return _db.Events.Include(e => e.Races);
+            }
+
+            return GetAll();
         }
 
         public async Task<Event> Add(Event eventInstance)
@@ -46,6 +68,19 @@ namespace CyclingResults.Models.Repository
         {
             return _db.Events.Find(id);
         }
+
+        public Event Get(int id, bool includeRaces)
+        {
+            if (includeRaces)
+            {
+                var task = _db.Events.Include(e => e.Races).FirstAsync(e => e.Id == id);
+                task.Wait();
+                return task.Result;
+            }
+
+            return Get(id);
+        }
+
         public async Task<bool> Update(Event eventInstance)
         {
             if (eventInstance == null)

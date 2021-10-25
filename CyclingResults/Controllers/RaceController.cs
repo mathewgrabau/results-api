@@ -6,6 +6,7 @@ using System.Linq;
 using CyclingResults.Domain;
 using CyclingResults.Domain.Repository;
 using System.Threading.Tasks;
+using CyclingResults.Models.Repository;
 
 namespace CyclingResults.Controllers
 {
@@ -14,12 +15,14 @@ namespace CyclingResults.Controllers
     public class RaceController : ControllerBase
     {
         private readonly ILogger<RaceController> _logger;
+        private readonly IEventRepository _eventRepository;
         private readonly IRepository<Race> _raceRepository;
         private readonly IRepository<ResultUpload> _uploadRepository;
 
-        public RaceController(ILogger<RaceController> logger, IRepository<Race> raceRepository, IRepository<ResultUpload> uploadRepository)
+        public RaceController(ILogger<RaceController> logger, IEventRepository eventRepository, IRepository<Race> raceRepository, IRepository<ResultUpload> uploadRepository)
         {
             _logger = logger;
+            _eventRepository = eventRepository;
             _raceRepository = raceRepository;
             _uploadRepository = uploadRepository;
         }
@@ -29,9 +32,10 @@ namespace CyclingResults.Controllers
         {
             if (id == 0)
             {
-                return SampleData.EventCollection.Races.ToList();
+                return _raceRepository.GetAll();
             }
-            return SampleData.EventCollection.Races.Where(r => r.Id == id);
+
+            return new List<Race>() { _raceRepository.Get(id.Value) };
         }
 
         // TODO need to develop the corresponding information.
@@ -53,12 +57,14 @@ namespace CyclingResults.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("{eventId}")]
-        public async Task<IActionResult> Post(int eventId, Race raceObject)
+        public async Task<IActionResult> Post(int eventId, [FromBody] Race raceObject)
         {
             if (raceObject == null)
             {
                 return BadRequest();
             }
+
+            raceObject.EventId = eventId;
 
             var result = await _raceRepository.Add(raceObject);
 

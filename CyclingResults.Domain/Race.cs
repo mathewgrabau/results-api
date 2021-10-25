@@ -28,6 +28,10 @@ namespace CyclingResults.Domain
         /// The list of identifying properties for the race results
         /// </summary>
         public virtual List<Result> Results { get; set; }
+
+        public int EventId { get; set; }
+
+        public virtual Event Event { get; set; }
     }
 
     /// <summary>

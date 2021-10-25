@@ -7,6 +7,7 @@ using CyclingResults.Domain;
 using System;
 using CyclingResults.Domain.Repository;
 using System.Threading.Tasks;
+using CyclingResults.Models.Repository;
 
 namespace CyclingResults.Controllers
 {
@@ -15,27 +16,55 @@ namespace CyclingResults.Controllers
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
-        private readonly IRepository<Event> _eventRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public EventController(ILogger<EventController> logger, IRepository<Event> eventRepository)
+        public EventController(ILogger<EventController> logger, IEventRepository eventRepository)
         {
             _logger = logger;
             _eventRepository = eventRepository;
         }
 
-        [HttpGet]
-        public IEnumerable<Event> Get(int? id)
+        [HttpGet("{id}")]
+        public IEnumerable<Event> Get(int id)
         {
-            if (id.HasValue && id.Value > 0)
+            if (id > 0)
             {
                 //return SampleData.EventCollection.Events.Where(e => e.Id == id);
                 var result = new List<Event>();
-                result.Add(_eventRepository.Get(id.Value));
+                var eventObject = _eventRepository.Get(id, true);
+                if (eventObject != null)
+                {
+                    foreach(var race in eventObject.Races)
+                    {
+                        if (race.Event != null)
+                        {
+                            race.Event = null;
+                        }
+                    }
+
+                    result.Add(eventObject);
+                }
                 return result;
             }
 
+            // Need to be able to cache it around there.
+            var collection = _eventRepository.GetAll(true);
 
-            return _eventRepository.GetAll();
+            if (collection != null)
+            {
+                foreach (var eventItem in collection)
+                {
+                    foreach(var race in eventItem.Races)
+                    {
+                        if (race.Event != null)
+                        {
+                            race.Event = null;
+                        }
+                    }
+                }
+            }
+
+            return collection;
 
             //if (id.HasValue && id.Value > 0)
             //{
@@ -85,7 +114,7 @@ namespace CyclingResults.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Event eventObject)
+        public async Task<IActionResult> Update(int id, [FromBody] Event eventObject)
         {
             if (eventObject == null)
             {

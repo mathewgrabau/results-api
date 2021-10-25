@@ -37,17 +37,45 @@ namespace CyclingResults.Models.Repository
 
             int changed = await _db.SaveChangesAsync();
 
-            throw new NotImplementedException();
+            return raceInstance;
         }
 
         public Race Get(int id)
         {
-            throw new NotImplementedException();
+            return _db.Races.Find(id);
         }
 
-        public Task<bool> Update(Race entityInstance)
+        public async Task<bool> Update(Race entityInstance)
         {
-            throw new NotImplementedException();
+            if (entityInstance == null)
+            {
+                throw new ArgumentNullException(nameof(entityInstance));
+            }
+
+            if (entityInstance.Id == 0)
+            {
+                throw new ArgumentException("Expected already existing entity", nameof(entityInstance));
+            }
+
+            Race dbInstance = await _db.Races.FindAsync(entityInstance.Id);
+
+            if (dbInstance == null)
+            {
+                return false;
+            }
+
+            dbInstance.Classification = entityInstance.Classification;
+            dbInstance.Category = entityInstance.Category;
+            dbInstance.StartTime = entityInstance.StartTime;
+            dbInstance.Laps = entityInstance.Laps;
+            dbInstance.Name = entityInstance.Name;
+            dbInstance.RaceType = entityInstance.RaceType;
+
+            _db.Update(dbInstance);
+
+            int changes = await _db.SaveChangesAsync();
+
+            return changes > 0;
         }
     }
 }
