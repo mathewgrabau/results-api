@@ -23,5 +23,9 @@ namespace CyclingResults.Domain.Repository
         Task<TEntity> Add(TEntity entityInstance);
 
         Task<bool> Update(TEntity entityInstance);
+
+        Task<bool> Delete(TId id);
+
+        Task<bool> Delete(TEntity entityInstance);
     }
 }

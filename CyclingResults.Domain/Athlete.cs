@@ -20,6 +20,9 @@ namespace CyclingResults.Domain
 
         public string LastName { get; set; }
 
-        public virtual ICollection<RaceResults> Results { get; set; }
+        //public virtual ICollection<RaceResults> Results { get; set; }
+
+        public virtual ICollection<Result> Results { get; set; }
+
     }
 }

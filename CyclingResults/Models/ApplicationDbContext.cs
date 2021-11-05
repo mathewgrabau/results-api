@@ -21,6 +21,8 @@ namespace CyclingResults.Models
 
         public DbSet<Race> Races { get; set; }
 
+        public DbSet<Result> Results { get; set; }
+
         public DbSet<ResultUpload> ResultUploads { get; set; }
     }
 }

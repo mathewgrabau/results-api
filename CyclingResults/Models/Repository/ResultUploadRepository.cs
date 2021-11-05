@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace CyclingResults.Models.Repository
 {
-    public class ResultUploadRepository : IRepository<ResultUpload>
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IResultUploadRepository : IRepository<ResultUpload>
+    {
+
+    }
+
+    public class ResultUploadRepository : IResultUploadRepository
     {
         private readonly ApplicationDbContext _db;
 

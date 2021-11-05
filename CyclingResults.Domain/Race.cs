@@ -75,6 +75,10 @@ namespace CyclingResults.Domain
 
         public int? Place { get; set; }
 
+        public int RaceId { get; set; }
+
+        public virtual Race Race { get; set; }
+
         /// <summary>
         /// Calculates the average lap time for this racers result.
         /// </summary>

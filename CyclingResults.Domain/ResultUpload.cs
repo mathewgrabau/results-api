@@ -17,6 +17,15 @@ namespace CyclingResults.Domain
         public string Url { get; set; }
 
         /// <summary>
+        /// The identifier for the result be retrieved.
+        /// </summary>
+        public Guid? ResultId { get; set; }
+
+        public DateTimeOffset CreatedOn { get; set; }
+
+        public int RaceId { get; set; }
+
+        /// <summary>
         /// Which item it was uploaded for.
         /// </summary>
         public virtual Race Race { get; set; }

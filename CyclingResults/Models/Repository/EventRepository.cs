@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CyclingResults.Models.Repository
 {
+
     public interface IEventRepository : IRepository<Event>
     {
         /// <summary>
@@ -102,6 +103,16 @@ namespace CyclingResults.Models.Repository
             _db.Update(dbObject);
             int changes = await _db.SaveChangesAsync();
             return changes > 0;
+        }
+
+        public Task<bool> Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> Delete(Event entityInstance)
+        {
+            throw new NotImplementedException();
         }
     }
 }
